@@ -89,9 +89,13 @@ class TDCToDoListController: UITableViewController {
     
     // MARK: - Pinch
 
+    // 插入点
     private var pinchIndexPath: NSIndexPath?
+    // 临时代理视图
     private var placheHolderCell: TDCPlaceHolderView?
+    // 两触点的起始位置
     private var sourcePoints: (upperPoint: CGPoint, downPoint: CGPoint)?
+    // 可以插入操作的标志
     private var pinchInsertEnabled = false
 
     func handlePinch(pinch: UIPinchGestureRecognizer) {
@@ -151,6 +155,7 @@ class TDCToDoListController: UITableViewController {
             
             placheHolderCell.lblTitle.text = scaleY <= 0.5 ? "张开双指插入新项目": "松手可以插入新项目"
             
+            // 张开超过一个Cell高度时，执行插入操作
             pinchInsertEnabled = scaleY >= 1
         }
     }
@@ -162,17 +167,21 @@ class TDCToDoListController: UITableViewController {
             self.placheHolderCell = nil
             
             if pinchInsertEnabled {
+                // 恢复各Cell的transform
                 for cell in self.tableView.visibleCells {
                     cell.transform = CGAffineTransformIdentity
                 }
 
+                // 插入操作
                 let index = pinchIndexPath.row + 1
                 items.insert(TDCToDoItem(text: ""), atIndex: index)
                 tableView.reloadData()
-                
+
+                // 弹出键盘
                 let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: index, inSection: 0)) as! TDCToDoItemCell
                 cell.txtField.becomeFirstResponder()
             } else {
+                // 放弃插入，恢复原位置
                 UIView.animateWithDuration(0.25, delay: 0, options: .CurveEaseInOut, animations: { [unowned self] () -> Void in
                     for cell in self.tableView.visibleCells {
                         cell.transform = CGAffineTransformIdentity
@@ -210,9 +219,8 @@ class TDCToDoListController: UITableViewController {
 
     func handleLongPress(longPress: UILongPressGestureRecognizer) {
         let point = longPress.locationInView(tableView)
-        NSLog("point = \(point)")
+
         if let indexPath = tableView.indexPathForRowAtPoint(point) {
-            NSLog("state=\(longPress.state), indexPath=\(indexPath), sourceIndexPath=\(sourceIndexPath)")
             switch longPress.state {
             case .Began:
                 if let cell = tableView.cellForRowAtIndexPath(indexPath) {
@@ -224,7 +232,8 @@ class TDCToDoListController: UITableViewController {
 
                     tableView.addSubview(snapView)
                     
-                    UIView.animateWithDuration(0.25, animations: { () -> Void in
+                    UIView.animateWithDuration(0.25, animations: {
+                        // 选中Cell跳出放大效果
                         snapView.alpha = 0.95
                         snapView.center = CGPointMake(cell.center.x, point.y)
                         snapView.transform = CGAffineTransformMakeScale(1.05, 1.05)
@@ -241,9 +250,11 @@ class TDCToDoListController: UITableViewController {
                 }
             case .Changed:
                 if let snapView = snapView {
+                    // 截图随手指上下移动
                     snapView.center = CGPointMake(snapView.center.x, point.y)
                 }
 
+                // 如果手指移动到一个新的Cell上面，隐藏Cell跟此Cell交换位置
                 if let fromIndexPath = sourceIndexPath {
                     if fromIndexPath != indexPath {
                         tableView.beginUpdates()
@@ -256,6 +267,7 @@ class TDCToDoListController: UITableViewController {
                     }
                 }
 
+                // 手指移动到屏幕顶端或底部，UITableView自动滚动
                 let step: CGFloat = 64
                 if let parentView = tableView.superview {
                     let parentPos = tableView.convertPoint(point, toView: parentView)
@@ -280,6 +292,7 @@ class TDCToDoListController: UITableViewController {
                     cell.alpha = 0
                     cell.hidden = false
 
+                    // 长按移动结束，隐藏的Cell恢复显示，删除截图
                     UIView.animateWithDuration(0.25, animations: { () -> Void in
                         snapView.center = cell.center
                         snapView.alpha = 0
