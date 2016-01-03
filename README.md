@@ -8,9 +8,15 @@
 
 ## 左划删除、右划完成
 
+![左划删除、右划完成](http://static.oschina.net/uploads/img/201601/03191236_WRjS.gif)
+
 ## 拖拽排序
 
+![拖拽排序](http://static.oschina.net/uploads/img/201601/03191236_KP0T.gif)
+
 ## 捏合张开插入
+
+![捏合张开插入](http://d3.freep.cn/3tb_160103181628led7558387.gif)
 
 ## 参考
 
