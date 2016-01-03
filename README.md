@@ -8,11 +8,11 @@
 
 ## 左划删除、右划完成
 
-![左划删除、右划完成](http://static.oschina.net/uploads/img/201601/03191236_WRjS.gif)
+![左划删除、右划完成](http://d2.freep.cn/3tb_160103181624ipju558387.gif)
 
 ## 拖拽排序
 
-![拖拽排序](http://static.oschina.net/uploads/img/201601/03191236_KP0T.gif)
+![拖拽排序](http://d3.freep.cn/3tb_16010318162335h1558387.gif)
 
 ## 捏合张开插入
 
